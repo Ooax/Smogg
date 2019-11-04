@@ -10,7 +10,7 @@ ui <- basicPage(
 )
 
 server <- function(input, output) {
-  map=openmap(c(43.611522,1.428533), c(43.598903,1.461059),type="osm")
+  map=openmap(c(53.1,18.600), c(53.0,18.700),type="osm")
   
   output$plot1 <- renderPlot({
     plot(map, raster=TRUE)
