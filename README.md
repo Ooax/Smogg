@@ -1,3 +1,2 @@
 # Smogg
 Jakość powietrza 
-hfxvdxhfxkhfxhf
