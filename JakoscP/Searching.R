@@ -16,10 +16,15 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(
       
-      textInput(inputId = "town", h3("Miejscowość"), 
+      textInput(inputId = "town", h3("Miejscowość/Stacja"), 
                 value = ""),
+      actionButton("miastoButton", "Wyszukaj w miejscowości"),
       
-      textOutput(outputId = "stacjeMiejscowości")
+      actionButton("stacjaButton", "Wyszukaj stację"),
+      
+      textOutput(outputId = "stacjeMiejscowości"),
+      
+      textOutput(outputId = "stacjeMiejscowościOut")
       
     ),
     
@@ -35,47 +40,104 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
-  info_stacje <- GET(url = path)
-  info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
-  info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
-  info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+  # path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
+  # info_stacje <- GET(url = path)
+  # info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
+  # info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
+  # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+
+  # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEŚCIE
+  observeEvent(input$miastoButton, {
+    # observeEvent(input$town, {
+      path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
+      info_stacje <- GET(url = path)
+      info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
+      info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
+      info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+      
+      twni <- input$town
+      
+      stacja_miasto <- info_stacje_dane
+      stacja_miasto_tbl <- as_data_frame(stacja_miasto) %>%
+        select("id", "city.name", "stationName")  %>%
+        filter(city.name == twni)
+      proponowane_stacje <- stacja_miasto_tbl %>%
+        select("stationName")
+      
+      
+      
+      output$stacjeMiejscowości <- renderText({
+        paste("Proponowane stacje: ")
+      })
+        
+        output$stacjeMiejscowościOut <- renderText({
+          paste(proponowane_stacje$stationName, "|")
+      })
+      
+      
+      
+    # })
+    
+  })
+  
+  
+  # PRZYCISK DO WYSZUKIWANIA DANYCH DLA DANEJ STACJI POMIAROWEJ
+  observeEvent(input$stacjaButton, {
+    # observeEvent(input$town, {
+      path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
+      info_stacje <- GET(url = path)
+      info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
+      info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
+      info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+      
+      twni <- input$town
+      
+      stacja_miasto <- info_stacje_dane
+      stacja_miasto_tbl <- as_data_frame(stacja_miasto) %>%
+        select("id", "stationName")  %>%
+        filter(stationName == twni)
+      proponowane_stacje <- stacja_miasto_tbl %>%
+        select("id")
+      
+      
+      
+      output$stacjeMiejscowości <- renderText({
+        paste("Dane dla wybranej stacji: ")
+      })
+      
+      path2 <- paste("http://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/",proponowane_stacje$id, sep = "")
+      
+      dane_stacji <- GET(url = path2)
+      dane_stacji <- content(dane_stacji, as = "text", encoding = "UTF-8")
+      dane_stacji_dane <- fromJSON(dane_stacji,flatten = TRUE)
+
+      dane <- dane_stacji_dane
+      # dane_no2 <- as_data_frame(dane_stacji_dane) %>%
+      dane_no2 <- as.list(dane) 
 
 
-  observeEvent(input$town, {
-    twni <- input$town
+      output$stacjeMiejscowościOut <- renderText({
+        paste("NO2 z godziny: ", dane_no2$no2SourceDataDate, ": ", dane_no2$no2IndexLevel$indexLevelName)
+      })
+
+
+       # output$stacjeMiejscowościOut <- renderText({
+       #   paste(dane_no2$no2SourceDataDate)
+       # })
+      
+
+    # })
     
-    stacja_miasto <- info_stacje_dane
-    stacja_miasto_tbl <- as_data_frame(stacja_miasto) %>%
-      select("id", "city.name", "stationName")  %>%
-      filter(city.name == twni)
-    proponowane_stacje <- stacja_miasto_tbl %>%
-      select("stationName")
-    
-    
-    
-    output$stacjeMiejscowości <- renderText({
-      paste("Proponowane stacje dla", input$town, ": ", proponowane_stacje)
-    })
   })
 
-  # stacja_miasto <- info_stacje_dane
-  # stacja_miasto_tbl <- as_data_frame(stacja_miasto) %>%
-  #   select("id", "city.name", "stationName")  %>%
-  #   filter(city.name == twni)
-  #   # filter(str_detect(city.name, "Toruń"))
-  # proponowane_stacje <- stacja_miasto_tbl %>%
-  #   select("stationName")
 
   
-  output$textOut <- renderText({
-    paste("Stacje w wybranym mieście:", info_stacje_dane_filtered )
-  })
+  ######################################## STATION COORDINATES
   
-  # output$stacjeMiejscowości <- renderText({
-  #   paste("Proponowane stacje dla", input$town, ": ", proponowane_stacje)
-  # })
 
+  
+  
+  
   
 }
 
