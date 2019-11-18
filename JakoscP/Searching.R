@@ -4,6 +4,7 @@ library(jsonlite)
 library(stringr)
 library(tibble)
 library(dplyr)
+require(leaflet)
 
 ui <- fluidPage(
   
@@ -31,7 +32,7 @@ ui <- fluidPage(
     # Main panel for displaying outputs ----
     mainPanel(
 
-      textOutput(outputId = "textOut")
+      leafletOutput("mymap")
       
     )
   )
@@ -39,6 +40,11 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
+  
+  output$mymap <- renderLeaflet({
+    leaflet() %>%
+      addTiles()
+  })
   
   # path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
   # info_stacje <- GET(url = path)
@@ -132,6 +138,8 @@ server <- function(input, output) {
     # })
     
   })
+  
+  
 
 
   
