@@ -53,7 +53,7 @@ server <- function(input, output) {
       info_stacje <- GET(url = path)
       info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
       info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
-      info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+      # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
       
       twni <- input$town
       
@@ -88,13 +88,13 @@ server <- function(input, output) {
       info_stacje <- GET(url = path)
       info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
       info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
-      info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+      # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
       
       twni <- input$town
       
       stacja_miasto <- info_stacje_dane
       stacja_miasto_tbl <- as_data_frame(stacja_miasto) %>%
-        select("id", "stationName")  %>%
+        select("id", "stationName", "gegrLat", "gegrLon")  %>%
         filter(stationName == twni)
       proponowane_stacje <- stacja_miasto_tbl %>%
         select("id")
@@ -119,6 +119,9 @@ server <- function(input, output) {
       output$stacjeMiejscowościOut <- renderText({
         paste("NO2 z godziny: ", dane_no2$no2SourceDataDate, ": ", dane_no2$no2IndexLevel$indexLevelName)
       })
+      
+      gLongitude <- stacja_miasto_tbl$gegrLon
+      gLatitude <- stacja_miasto_tbl$gegrLat
 
 
        # output$stacjeMiejscowościOut <- renderText({
