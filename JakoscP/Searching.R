@@ -41,10 +41,12 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  output$mymap <- renderLeaflet({
+  mymap2 <- renderLeaflet({
     leaflet() %>%
-      addTiles()
+      addTiles()  # Add default OpenStreetMap map tiles
   })
+  
+  output$mymap <- mymap2
   
   # path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
   # info_stacje <- GET(url = path)
@@ -129,6 +131,16 @@ server <- function(input, output) {
       gLongitude <- stacja_miasto_tbl$gegrLon
       gLatitude <- stacja_miasto_tbl$gegrLat
 
+      
+      
+      mymap2 <- renderLeaflet({
+        leaflet() %>%
+          addTiles() %>%  # Add default OpenStreetMap map tiles
+          addMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup="test")
+      })
+      
+      output$mymap <- mymap2
+      #mymap2 <- addMarkers(mymap2, lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup="testr")
 
        # output$stacjeMiejscowościOut <- renderText({
        #   paste(dane_no2$no2SourceDataDate)
