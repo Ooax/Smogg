@@ -79,16 +79,53 @@ server <- function(input, output) {
     
     stacja_miasto <- info_stacje_dane
     stacja_miasto_tbl <- as_data_frame(stacja_miasto) %>%
-      select("id", "city.name", "stationName")  %>%
+      select("id", "city.name", "stationName",  "gegrLat", "gegrLon")  %>%
       filter(city.name == twni)
     proponowane_stacje <- stacja_miasto_tbl %>%
-      select("stationName", "id")
+      select("stationName", "id",  "gegrLat", "gegrLon")
     
     # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTÓW
     
+    lista_stacji <- list()
     
+    print(proponowane_stacje)
     
+    for(i in proponowane_stacje){
+      
+      url_pomiar_stacji <- paste("http://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/",i["id"] , sep = "")
+      print(i[, 2])
+      
+      dane_stacji <- GET(url = url_pomiar_stacji)
+      dane_stacji <- content(dane_stacji, as = "text", encoding = "UTF-8")
+      dane_stacji_dane <- fromJSON(dane_stacji,flatten = TRUE)
+      
+      dane_stacji_lista <- as.list(dane_stacji_dane)
+      
+      
+      so2_pasted <- paste("SO2", "</br>", dane_stacji_lista$so2SourceDataDate, ": ", dane_stacji_lista$so2IndexLevel$indexLevelName)
+      no2_pasted <- paste("NO2", "</br>", dane_stacji_lista$no2SourceDataDate, ": ", dane_stacji_lista$no2IndexLevel$indexLevelName)
+      co_pasted <- paste("CO", "</br>", dane_stacji_lista$coSourceDataDate, ": ", dane_stacji_lista$coIndexLevel$indexLevelName)
+      pm10_pasted <- paste("PM10", "</br>", dane_stacji_lista$pm10SourceDataDate, ": ", dane_stacji_lista$pm10IndexLevel$indexLevelName)
+      pm25_pasted <- paste("PM25", "</br>", dane_stacji_lista$pm25SourceDataDate, ": ", dane_stacji_lista$pm25IndexLevel$indexLevelName)
+      o3_pasted <- paste("O3", "</br>", dane_stacji_lista$o3SourceDataDate, ": ", dane_stacji_lista$o3IndexLevel$indexLevelName)
+      c6h6_pasted <- paste("C6H6", "</br>", dane_stacji_lista$c6h6SourceDataDate, ": ", dane_stacji_lista$c6h6IndexLevel$indexLevelName)
+      
+
+      obiekt_klasy_stacji <- new("stacja", nazwaStacji = i["stationName"], idStacji = i["id"],
+                                 latitude = i["gegrLat"], longitude = i["gegrLon"],
+                                 so2 = so2_pasted,
+                                 no2 = no2_pasted,
+                                 co = co_pasted,
+                                 pm10 = pm10_pasted,
+                                 pm25 = pm25_pasted,
+                                 o3 = o3_pasted,
+                                 c6h6 = c6h6_pasted
+                                 )
+
+      lista_stacji.append(obiekt_klasy_stacji)
+    }
     
+    print(lista_stacji)
     
     
     
