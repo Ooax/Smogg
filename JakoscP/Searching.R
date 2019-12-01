@@ -84,16 +84,24 @@ server <- function(input, output) {
     proponowane_stacje <- stacja_miasto_tbl %>%
       select("stationName", "id",  "gegrLat", "gegrLon")
     
+    
+    test_stacji <- as.list(stacja_miasto_tbl)
+    
     # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTÓW
     
     lista_stacji <- list()
     
-    print(proponowane_stacje)
-    
-    for(i in proponowane_stacje){
+     # print(test_stacji)
+     # 
+     # print(test_stacji$city.name[1])
+    # for(i in test_stacji){
+     i <- 1
+     while(i<nrow(stacja_miasto_tbl) + 1){
+       
       
-      url_pomiar_stacji <- paste("http://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/",i["id"] , sep = "")
-      print(i[, 2])
+      
+      url_pomiar_stacji <- paste("http://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/",test_stacji$id[i] , sep = "")
+      
       
       dane_stacji <- GET(url = url_pomiar_stacji)
       dane_stacji <- content(dane_stacji, as = "text", encoding = "UTF-8")
@@ -111,8 +119,8 @@ server <- function(input, output) {
       c6h6_pasted <- paste("C6H6", "</br>", dane_stacji_lista$c6h6SourceDataDate, ": ", dane_stacji_lista$c6h6IndexLevel$indexLevelName)
       
 
-      obiekt_klasy_stacji <- new("stacja", nazwaStacji = i["stationName"], idStacji = i["id"],
-                                 latitude = i["gegrLat"], longitude = i["gegrLon"],
+      obiekt_klasy_stacji <- new("stacja", nazwaStacji = test_stacji$stationName[i], idStacji = test_stacji$id[i],
+                                 latitude = as.numeric(test_stacji$gegrLat[i]), longitude = as.numeric(test_stacji$gegrLon[i]),
                                  so2 = so2_pasted,
                                  no2 = no2_pasted,
                                  co = co_pasted,
@@ -122,7 +130,10 @@ server <- function(input, output) {
                                  c6h6 = c6h6_pasted
                                  )
 
-      lista_stacji.append(obiekt_klasy_stacji)
+      lista_stacji[[i]] <- obiekt_klasy_stacji
+      
+      
+      i = i+1
     }
     
     print(lista_stacji)
