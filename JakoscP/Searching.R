@@ -40,13 +40,25 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
-  
+
   mymap2 <- renderLeaflet({
     leaflet() %>%
       addTiles()
   })
   
+  
   output$mymap <- mymap2
+  
+  
+  # KLASA STACJI
+  
+  setClass("stacja", slots=list(nazwaStacji="character", idStacji="numeric", latitude="numeric", longitude="numeric",
+                                so2="character", no2="character", co="character", pm10="character", pm25="character", o3="character", c6h6="character"))
+  
+  
+  
+  
+  
   
   # path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
   # info_stacje <- GET(url = path)
@@ -70,7 +82,14 @@ server <- function(input, output) {
       select("id", "city.name", "stationName")  %>%
       filter(city.name == twni)
     proponowane_stacje <- stacja_miasto_tbl %>%
-      select("stationName")
+      select("stationName", "id")
+    
+    # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTÓW
+    
+    
+    
+    
+    
     
     
     
@@ -124,18 +143,17 @@ server <- function(input, output) {
     dane_pomiarow <- as.list(dane) 
     
     
-    st <- paste("ST z godziny: ", dane_pomiarow$stSourceDataDate, ": ", dane_pomiarow$stIndexLevel$indexLevelName, "\n")
-    so2 <- paste("SO2 z godziny: ", dane_pomiarow$so2SourceDataDate, ": ", dane_pomiarow$so2IndexLevel$indexLevelName, "\n")
-    no2 <- paste("NO2 z godziny: ", dane_pomiarow$no2SourceDataDate, ": ", dane_pomiarow$no2IndexLevel$indexLevelName, "\n")
-    co <- paste("CO z godziny: ", dane_pomiarow$coSourceDataDate, ": ", dane_pomiarow$coIndexLevel$indexLevelName, "\n")
-    pm10 <- paste("PM10 z godziny: ", dane_pomiarow$pm10SourceDataDate, ": ", dane_pomiarow$pm10IndexLevel$indexLevelName, "\n")
-    pm25 <- paste("PM25 z godziny: ", dane_pomiarow$pm25SourceDataDate, ": ", dane_pomiarow$pm25IndexLevel$indexLevelName, "\n")
-    o3 <- paste("O3 z godziny: ", dane_pomiarow$o3SourceDataDate, ": ", dane_pomiarow$o3IndexLevel$indexLevelName, "\n")
-    c6h6 <- paste("C6H6 z godziny: ", dane_pomiarow$c6h6SourceDataDate, ": ", dane_pomiarow$c6h6IndexLevel$indexLevelName, "\n")
+    so2 <- paste("SO2", "</br>", dane_pomiarow$so2SourceDataDate, ": ", dane_pomiarow$so2IndexLevel$indexLevelName)
+    no2 <- paste("NO2", "</br>", dane_pomiarow$no2SourceDataDate, ": ", dane_pomiarow$no2IndexLevel$indexLevelName)
+    co <- paste("CO", "</br>", dane_pomiarow$coSourceDataDate, ": ", dane_pomiarow$coIndexLevel$indexLevelName)
+    pm10 <- paste("PM10", "</br>", dane_pomiarow$pm10SourceDataDate, ": ", dane_pomiarow$pm10IndexLevel$indexLevelName)
+    pm25 <- paste("PM25", "</br>", dane_pomiarow$pm25SourceDataDate, ": ", dane_pomiarow$pm25IndexLevel$indexLevelName)
+    o3 <- paste("O3", "</br>", dane_pomiarow$o3SourceDataDate, ": ", dane_pomiarow$o3IndexLevel$indexLevelName)
+    c6h6 <- paste("C6H6", "</br>", dane_pomiarow$c6h6SourceDataDate, ": ", dane_pomiarow$c6h6IndexLevel$indexLevelName)
     
     
     textHolder <- renderText({
-      paste(st, so2, no2, co, pm10, pm25, o3, c6h6)
+      paste(so2, no2, co, pm10, pm25, o3, c6h6, sep="</br>")
     }, sep="\n")
     
     output$stacjeMiejscowościOut <- textHolder
@@ -151,12 +169,13 @@ server <- function(input, output) {
     # output$stacjeMiejscowościOut <- renderText({
     #   paste(dane_no2$no2SourceDataDate)
     # })
-    
+
     mymap2 <- renderLeaflet({
       leaflet() %>%
         addTiles() %>%
-        addAwesomeMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup = paste(st, so2, no2, co, pm10, pm25, o3, c6h6, sep="</br>"))
+        addAwesomeMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup = paste( so2, no2, co, pm10, pm25, o3, c6h6, sep="</br>"))
     })
+
     
     output$mymap <- mymap2
     
