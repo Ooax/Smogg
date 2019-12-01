@@ -136,7 +136,7 @@ server <- function(input, output) {
     
     textHolder <- renderText({
       paste(st, so2, no2, co, pm10, pm25, o3, c6h6)
-    })
+    }, sep="\n")
     
     output$stacjeMiejscowościOut <- textHolder
     
@@ -155,7 +155,7 @@ server <- function(input, output) {
     mymap2 <- renderLeaflet({
       leaflet() %>%
         addTiles() %>%
-        addAwesomeMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup = paste(st, so2, no2, co, pm10, pm25, o3, c6h6))
+        addAwesomeMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup = paste(st, so2, no2, co, pm10, pm25, o3, c6h6, sep="</br>"))
     })
     
     output$mymap <- mymap2
