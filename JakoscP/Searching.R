@@ -41,10 +41,12 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  output$mymap <- renderLeaflet({
+  mymap2 <- renderLeaflet({
     leaflet() %>%
       addTiles()
   })
+  
+  output$mymap <- mymap2
   
   # path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
   # info_stacje <- GET(url = path)
@@ -149,22 +151,20 @@ server <- function(input, output) {
     #   paste(dane_no2$no2SourceDataDate)
     # })
     
+    mymap2 <- renderLeaflet({
+      leaflet() %>%
+        addTiles() %>%
+        addMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup = "test")
+    })
+    
+    output$mymap <- mymap2
+    
     
     # })
     
   })
   
-  
-  
-  
-  
   ######################################## STATION COORDINATES
-  
-  
-  
-  
-  
-  
 }
 
 # Create Shiny app ----
