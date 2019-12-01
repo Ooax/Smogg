@@ -124,20 +124,21 @@ server <- function(input, output) {
     dane_pomiarow <- as.list(dane) 
     
     
-    st <- c("ST z godziny: ", dane_pomiarow$stSourceDataDate, ": ", dane_pomiarow$stIndexLevel$indexLevelName)
-    so2 <- c("SO2 z godziny: ", dane_pomiarow$so2SourceDataDate, ": ", dane_pomiarow$so2IndexLevel$indexLevelName)
-    no2 <- c("NO2 z godziny: ", dane_pomiarow$no2SourceDataDate, ": ", dane_pomiarow$no2IndexLevel$indexLevelName)
-    co <- c("CO z godziny: ", dane_pomiarow$coSourceDataDate, ": ", dane_pomiarow$coIndexLevel$indexLevelName)
-    pm10 <- c("PM10 z godziny: ", dane_pomiarow$pm10SourceDataDate, ": ", dane_pomiarow$pm10IndexLevel$indexLevelName)
-    pm25 <- c("PM25 z godziny: ", dane_pomiarow$pm25SourceDataDate, ": ", dane_pomiarow$pm25IndexLevel$indexLevelName)
-    o3 <- c("O3 z godziny: ", dane_pomiarow$o3SourceDataDate, ": ", dane_pomiarow$o3IndexLevel$indexLevelName)
-    c6h6 <- c("C6H6 z godziny: ", dane_pomiarow$c6h6SourceDataDate, ": ", dane_pomiarow$c6h6IndexLevel$indexLevelName)
+    st <- paste("ST z godziny: ", dane_pomiarow$stSourceDataDate, ": ", dane_pomiarow$stIndexLevel$indexLevelName, "\n")
+    so2 <- paste("SO2 z godziny: ", dane_pomiarow$so2SourceDataDate, ": ", dane_pomiarow$so2IndexLevel$indexLevelName, "\n")
+    no2 <- paste("NO2 z godziny: ", dane_pomiarow$no2SourceDataDate, ": ", dane_pomiarow$no2IndexLevel$indexLevelName, "\n")
+    co <- paste("CO z godziny: ", dane_pomiarow$coSourceDataDate, ": ", dane_pomiarow$coIndexLevel$indexLevelName, "\n")
+    pm10 <- paste("PM10 z godziny: ", dane_pomiarow$pm10SourceDataDate, ": ", dane_pomiarow$pm10IndexLevel$indexLevelName, "\n")
+    pm25 <- paste("PM25 z godziny: ", dane_pomiarow$pm25SourceDataDate, ": ", dane_pomiarow$pm25IndexLevel$indexLevelName, "\n")
+    o3 <- paste("O3 z godziny: ", dane_pomiarow$o3SourceDataDate, ": ", dane_pomiarow$o3IndexLevel$indexLevelName, "\n")
+    c6h6 <- paste("C6H6 z godziny: ", dane_pomiarow$c6h6SourceDataDate, ": ", dane_pomiarow$c6h6IndexLevel$indexLevelName, "\n")
     
-    lista_jakosci <- list(st,so2,no2,co,pm10,pm25,o3, c6h6)
     
-    output$stacjeMiejscowościOut <- renderText({
-      paste(lista_jakosci)
+    textHolder <- renderText({
+      paste(st, so2, no2, co, pm10, pm25, o3, c6h6)
     })
+    
+    output$stacjeMiejscowościOut <- textHolder
     
     # output$stacjeMiejscowościOut <- renderText({
     #   paste("NO2 z godziny: ", dane_pomiarow$no2SourceDataDate, ": ", dane_pomiarow$no2IndexLevel$indexLevelName)
@@ -154,7 +155,7 @@ server <- function(input, output) {
     mymap2 <- renderLeaflet({
       leaflet() %>%
         addTiles() %>%
-        addMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup = "test")
+        addAwesomeMarkers(lng=as.numeric(gLongitude), lat=as.numeric(gLatitude), popup = paste(st, so2, no2, co, pm10, pm25, o3, c6h6))
     })
     
     output$mymap <- mymap2
