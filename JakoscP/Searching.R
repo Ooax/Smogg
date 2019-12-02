@@ -136,9 +136,20 @@ server <- function(input, output) {
       i = i+1
     }
     
-    print(lista_stacji)
     
+    map_leaflet <- leaflet()
+    map_leaflet <- addTiles(map_leaflet)
     
+    i = 1
+    while(i<nrow(stacja_miasto_tbl)+1){
+      map_leaflet <- addAwesomeMarkers(map_leaflet, lng=lista_stacji[[i]]@longitude, lat = lista_stacji[[i]]@latitude,label=lista_stacji[[i]]@nazwaStacji ,
+                                       popup = paste( lista_stacji[[i]]@so2, lista_stacji[[i]]@no2, lista_stacji[[i]]@co, lista_stacji[[i]]@pm10, lista_stacji[[i]]@pm25, lista_stacji[[i]]@o3, lista_stacji[[i]]@c6h6))
+      i = i+1
+    }
+
+    mymap2 <- renderLeaflet(map_leaflet)
+        
+    output$mymap <- mymap2
     
     
     output$stacjeMiejscowości <- renderText({

@@ -3,8 +3,7 @@ require(shiny)
 require(leaflet)
 
 ui <- basicPage(
-  leafletOutput("mymap"),
-  p()
+  leafletOutput("mymap")
 )
 
 server <- function(input, output, session) {
