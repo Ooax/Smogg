@@ -109,14 +109,55 @@ server <- function(input, output) {
       
       dane_stacji_lista <- as.list(dane_stacji_dane)
       
-      
-      so2_pasted <- paste("SO2", "</br>", dane_stacji_lista$so2SourceDataDate, ": ", dane_stacji_lista$so2IndexLevel$indexLevelName)
-      no2_pasted <- paste("NO2", "</br>", dane_stacji_lista$no2SourceDataDate, ": ", dane_stacji_lista$no2IndexLevel$indexLevelName)
-      co_pasted <- paste("CO", "</br>", dane_stacji_lista$coSourceDataDate, ": ", dane_stacji_lista$coIndexLevel$indexLevelName)
-      pm10_pasted <- paste("PM10", "</br>", dane_stacji_lista$pm10SourceDataDate, ": ", dane_stacji_lista$pm10IndexLevel$indexLevelName)
-      pm25_pasted <- paste("PM25", "</br>", dane_stacji_lista$pm25SourceDataDate, ": ", dane_stacji_lista$pm25IndexLevel$indexLevelName)
-      o3_pasted <- paste("O3", "</br>", dane_stacji_lista$o3SourceDataDate, ": ", dane_stacji_lista$o3IndexLevel$indexLevelName)
-      c6h6_pasted <- paste("C6H6", "</br>", dane_stacji_lista$c6h6SourceDataDate, ": ", dane_stacji_lista$c6h6IndexLevel$indexLevelName)
+      if(length(dane_stacji_lista$so2SourceDataDate) == 1){
+        so2_pasted <- paste("SO2", "</br>", dane_stacji_lista$so2SourceDataDate, ": ", dane_stacji_lista$so2IndexLevel$indexLevelName, "</br>")
+      }
+      else{
+        so2_pasted <- ""
+      }
+      if(length(dane_stacji_lista$no2SourceDataDate) == 1){
+        no2_pasted <- paste("NO2", "</br>", dane_stacji_lista$no2SourceDataDate, ": ", dane_stacji_lista$no2IndexLevel$indexLevelName, "</br>")
+      }
+      else{
+        no2_pasted <- ""
+      }
+      if(length(dane_stacji_lista$coSourceDataDate) == 1){
+        co_pasted <- paste("CO", "</br>", dane_stacji_lista$coSourceDataDate, ": ", dane_stacji_lista$coIndexLevel$indexLevelName, "</br>")
+      }
+      else{
+        co_pasted <- ""
+      }
+      if(length(dane_stacji_lista$pm10SourceDataDate) == 1){
+        pm10_pasted <- paste("PM10", "</br>", dane_stacji_lista$pm10SourceDataDate, ": ", dane_stacji_lista$pm10IndexLevel$indexLevelName, "</br>")
+      }
+      else{
+        pm10_pasted <- ""
+      }
+      if(length(dane_stacji_lista$pm25SourceDataDate) == 1){
+        pm25_pasted <- paste("PM25", "</br>", dane_stacji_lista$pm25SourceDataDate, ": ", dane_stacji_lista$pm25IndexLevel$indexLevelName, "</br>")
+      }
+      else{
+        pm25_pasted <- ""
+      }
+      if(length(dane_stacji_lista$o3SourceDataDate) == 1){
+        o3_pasted <- paste("O3", "</br>", dane_stacji_lista$o3SourceDataDate, ": ", dane_stacji_lista$o3IndexLevel$indexLevelName, "</br>")
+      }
+      else{
+        o3_pasted <- ""
+      }
+      if(length(dane_stacji_lista$c6h6SourceDataDate) == 1){
+        c6h6_pasted <- paste("C6H6", "</br>", dane_stacji_lista$c6h6SourceDataDate, ": ", dane_stacji_lista$c6h6IndexLevel$indexLevelName, "</br>")
+      }
+      else{
+        c6h6_pasted <- ""
+      }
+      # so2_pasted <- paste("SO2", "</br>", dane_stacji_lista$so2SourceDataDate, ": ", dane_stacji_lista$so2IndexLevel$indexLevelName)
+      # no2_pasted <- paste("NO2", "</br>", dane_stacji_lista$no2SourceDataDate, ": ", dane_stacji_lista$no2IndexLevel$indexLevelName)
+      # co_pasted <- paste("CO", "</br>", dane_stacji_lista$coSourceDataDate, ": ", dane_stacji_lista$coIndexLevel$indexLevelName)
+      # pm10_pasted <- paste("PM10", "</br>", dane_stacji_lista$pm10SourceDataDate, ": ", dane_stacji_lista$pm10IndexLevel$indexLevelName)
+      # pm25_pasted <- paste("PM25", "</br>", dane_stacji_lista$pm25SourceDataDate, ": ", dane_stacji_lista$pm25IndexLevel$indexLevelName)
+      # o3_pasted <- paste("O3", "</br>", dane_stacji_lista$o3SourceDataDate, ": ", dane_stacji_lista$o3IndexLevel$indexLevelName)
+      # c6h6_pasted <- paste("C6H6", "</br>", dane_stacji_lista$c6h6SourceDataDate, ": ", dane_stacji_lista$c6h6IndexLevel$indexLevelName)
       
 
       obiekt_klasy_stacji <- new("stacja", nazwaStacji = test_stacji$stationName[i], idStacji = test_stacji$id[i],
