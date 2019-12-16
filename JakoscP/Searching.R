@@ -48,46 +48,14 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  my_data <- readRDS("wynik.rds")
-  print(my_data)
-
-  mymap2 <- renderLeaflet({
-    leaflet() %>%
-      addTiles()
-  })
   
-  
-  output$mymap <- mymap2
-  
-  
-  # KLASA STACJI
-  
-  setClass("stacja", slots=list(nazwaStacji="character", idStacji="numeric", latitude="numeric", longitude="numeric",
-                                so2="character", no2="character", co="character", pm10="character", pm25="character", o3="character", c6h6="character"))
-  
-  
-  
-  
-  
-  
-  # path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
-  # info_stacje <- GET(url = path)
-  # info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
-  # info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
-  # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
-  
-  
-  observeEvent(input$zapisButton, {
+  saveToRDS <- function(){
     twni <- input$town
     # Save a single object to a file
     saveRDS(twni, "wynik.rds")
-    # Restore it under a different name
-  #  my_data <- readRDS("mtcars.rds")
+  }
   
-  })
-  
-  # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEŚCIE
-  observeEvent(input$miastoButton, {
+  setTownMarkers <- function(inputTown) {
     # observeEvent(input$town, {
     path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
     info_stacje <- GET(url = path)
@@ -95,7 +63,7 @@ server <- function(input, output) {
     info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
     # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
     
-    twni <- input$town
+    twni <- inputTown
     
     stacja_miasto <- info_stacje_dane
     stacja_miasto_tbl <- as_data_frame(stacja_miasto) %>%
@@ -111,13 +79,13 @@ server <- function(input, output) {
     
     lista_stacji <- list()
     
-     # print(test_stacji)
-     # 
-     # print(test_stacji$city.name[1])
+    # print(test_stacji)
+    # 
+    # print(test_stacji$city.name[1])
     # for(i in test_stacji){
-     i <- 1
-     while(i<nrow(stacja_miasto_tbl) + 1){
-       
+    i <- 1
+    while(i<nrow(stacja_miasto_tbl) + 1){
+      
       
       
       url_pomiar_stacji <- paste("http://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/",test_stacji$id[i] , sep = "")
@@ -179,7 +147,7 @@ server <- function(input, output) {
       # o3_pasted <- paste("O3", "</br>", dane_stacji_lista$o3SourceDataDate, ": ", dane_stacji_lista$o3IndexLevel$indexLevelName)
       # c6h6_pasted <- paste("C6H6", "</br>", dane_stacji_lista$c6h6SourceDataDate, ": ", dane_stacji_lista$c6h6IndexLevel$indexLevelName)
       
-
+      
       obiekt_klasy_stacji <- new("stacja", nazwaStacji = test_stacji$stationName[i], idStacji = test_stacji$id[i],
                                  latitude = as.numeric(test_stacji$gegrLat[i]), longitude = as.numeric(test_stacji$gegrLon[i]),
                                  so2 = so2_pasted,
@@ -189,8 +157,8 @@ server <- function(input, output) {
                                  pm25 = pm25_pasted,
                                  o3 = o3_pasted,
                                  c6h6 = c6h6_pasted
-                                 )
-
+      )
+      
       lista_stacji[[i]] <- obiekt_klasy_stacji
       
       
@@ -207,9 +175,9 @@ server <- function(input, output) {
                                        popup = paste( lista_stacji[[i]]@so2, lista_stacji[[i]]@no2, lista_stacji[[i]]@co, lista_stacji[[i]]@pm10, lista_stacji[[i]]@pm25, lista_stacji[[i]]@o3, lista_stacji[[i]]@c6h6))
       i = i+1
     }
-
+    
     mymap2 <- renderLeaflet(map_leaflet)
-        
+    
     output$mymap <- mymap2
     
     
@@ -225,7 +193,45 @@ server <- function(input, output) {
     
     # })
     
-  })
+  }
+  
+  
+  #-------------------------------------------------------------------------------------------------
+  #                     KONIEC FUNKCJI setTownMarkers
+  #-------------------------------------------------------------------------------------------------
+  
+  my_data <- readRDS("wynik.rds")
+  print(my_data)
+  
+  setTownMarkers(my_data)
+  
+  # output$mymap <- mymap2
+  
+  
+  # KLASA STACJI
+  
+  setClass("stacja", slots=list(nazwaStacji="character", idStacji="numeric", latitude="numeric", longitude="numeric",
+                                so2="character", no2="character", co="character", pm10="character", pm25="character", o3="character", c6h6="character"))
+  
+  
+  
+  
+  
+  
+  # path <- "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
+  # info_stacje <- GET(url = path)
+  # info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
+  # info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
+  # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+
+  observeEvent(input$zapisButton, saveToRDS())
+  
+  
+ 
+  #------------------------------------------------------------------------------------------------------
+  
+  # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEŚCIE
+  observeEvent(input$miastoButton, setTownMarkers(input$town))
   
 }
 
