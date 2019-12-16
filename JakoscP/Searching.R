@@ -7,20 +7,27 @@ library(dplyr)
 require(leaflet)
 
 ui <- fluidPage(
+
   
-  # App title ----
-  titlePanel("Jakość powietrza"),
+  h1(id="big-heading", "Stan powietrza", icon("leaf")),
+  tags$style(HTML("#big-heading{color: darkgreen; font-size: 60px; font-style: oblique; font-family: Times, serif;}")),
+  
   
   # Sidebar layout with input and output definitions ----
-  sidebarLayout(
+  verticalLayout(
     
     # Sidebar panel for inputs ----
-    sidebarPanel(
+    sidebarPanel( 
       
-      textInput(inputId = "town", h3("Wpisz nazwę miejscowości"), 
+      textInput(inputId = "town", h3("Wpisz nazwę miejscowości:", style="color: green; font-size: 30px;"), 
                 value = ""),
-      actionButton("miastoButton", "Wyszukaj"),
       
+      actionButton("miastoButton", "Wyszukaj", icon("search-location"), 
+                   style="color: green; background-color: white; border-color: green"),
+
+      actionButton("zapisButton", "Zapisz jako domyślne", icon("save"), 
+             style="color: white; background-color: green; border-color: green")
+
       # textOutput(outputId = "stacjeMiejscowości"),
       # 
       # textOutput(outputId = "stacjeMiejscowościOut")
@@ -30,14 +37,19 @@ ui <- fluidPage(
     # Main panel for displaying outputs ----
     mainPanel(
       
-      leafletOutput("mymap")
-      
+      leafletOutput("mymap"),
+  
     )
   )
 )
+  
+
 
 
 server <- function(input, output) {
+  
+  my_data <- readRDS("wynik.rds")
+  print(my_data)
 
   mymap2 <- renderLeaflet({
     leaflet() %>%
@@ -63,6 +75,16 @@ server <- function(input, output) {
   # info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
   # info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
   # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
+  
+  
+  observeEvent(input$zapisButton, {
+    twni <- input$town
+    # Save a single object to a file
+    saveRDS(twni, "wynik.rds")
+    # Restore it under a different name
+  #  my_data <- readRDS("mtcars.rds")
+  
+  })
   
   # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEŚCIE
   observeEvent(input$miastoButton, {
