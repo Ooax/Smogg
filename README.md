@@ -1,4 +1,0 @@
-# Smogg
-Jakość powietrza 
-
-Test

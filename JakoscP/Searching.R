@@ -8,25 +8,26 @@ require(leaflet)
 
 ui <- fluidPage(
 
-  
   h1(id="big-heading", "Stan powietrza", icon("leaf")),
   tags$style(HTML("#big-heading{color: darkgreen; font-size: 60px; font-style: oblique; font-family: Times, serif;}")),
   
   
   # Sidebar layout with input and output definitions ----
-  verticalLayout(
+  sidebarLayout(
     
     # Sidebar panel for inputs ----
-    sidebarPanel( 
+    sidebarPanel( tags$head(
+      tags$style(type="text/css", ".well { min-width: 255px; max-width:700px }")
+    ),
       
       textInput(inputId = "town", h3("Wpisz nazwę miejscowości:", style="color: green; font-size: 30px;"), 
-                value = ""),
+                value = "", width = "100%"),
       
       actionButton("miastoButton", "Wyszukaj", icon("search-location"), 
-                   style="color: green; background-color: white; border-color: green"),
+                   style="color: green; background-color: white; border-color: green; ", width="200px"),
 
       actionButton("zapisButton", "Zapisz jako domyślne", icon("save"), 
-             style="color: white; background-color: green; border-color: green")
+             style="color: white; background-color: green; border-color: green; ", width="200px")
 
       # textOutput(outputId = "stacjeMiejscowości"),
       # 
@@ -35,9 +36,9 @@ ui <- fluidPage(
     ),
     
     # Main panel for displaying outputs ----
-    mainPanel(
+    mainPanel(width="8", style="border:groove 10px green; padding: 0",
       
-      leafletOutput("mymap"),
+      leafletOutput("mymap", height = "80vh"),
   
     )
   )
