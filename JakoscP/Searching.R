@@ -49,6 +49,42 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
+  colorIcons <- iconList(
+    bdobry = makeIcon(iconUrl = "green",
+                      iconWidth = 38, iconHeight = 95),
+    dobry = makeIcon(iconUrl = "http://leafletjs.com/examples/custom-icons/leaf-red.png",
+                     iconWidth = 38, iconHeight = 95)
+    
+  )
+  
+  kolor <- function(inputStan){
+    returnString = "black"
+    if(inputStan == ""){
+      returnString = "lightgray"
+    }
+    if(inputStan == "Bardzo dobry"){
+      returnString = "green"
+    }
+    if(inputStan == "Dobry"){
+      returnString = "lightgreen"
+    }Gdynia
+    if(inputStan == "Umiarkowany"){
+      returnString = "beige"
+    }
+    if(inputStan == "Dostateczny"){
+      returnString = "orange"
+    }
+    if(inputStan == "Zły"){
+      returnString = "red"
+    }
+    if(inputStan == "Bardzo zły"){
+      returnString = "darkred"
+    }
+    
+    
+    return(returnString)
+    
+  }
   
   saveToRDS <- function(){
     twni <- input$town
@@ -118,9 +154,11 @@ server <- function(input, output) {
       }
       if(length(dane_stacji_lista$pm10SourceDataDate) == 1){
         pm10_pasted <- paste("PM10", "</br>", dane_stacji_lista$pm10SourceDataDate, ": ", dane_stacji_lista$pm10IndexLevel$indexLevelName, "</br>")
+        pm10holder <- dane_stacji_lista$pm10IndexLevel$indexLevelName
       }
       else{
         pm10_pasted <- ""
+        pm10holder <- ""
       }
       if(length(dane_stacji_lista$pm25SourceDataDate) == 1){
         pm25_pasted <- paste("PM25", "</br>", dane_stacji_lista$pm25SourceDataDate, ": ", dane_stacji_lista$pm25IndexLevel$indexLevelName, "</br>")
@@ -157,7 +195,8 @@ server <- function(input, output) {
                                  pm10 = pm10_pasted,
                                  pm25 = pm25_pasted,
                                  o3 = o3_pasted,
-                                 c6h6 = c6h6_pasted
+                                 c6h6 = c6h6_pasted,
+                                 pm10prep = pm10holder
       )
       
       lista_stacji[[i]] <- obiekt_klasy_stacji
@@ -172,7 +211,19 @@ server <- function(input, output) {
     
     i = 1
     while(i<nrow(stacja_miasto_tbl)+1){
-      map_leaflet <- addAwesomeMarkers(map_leaflet, lng=lista_stacji[[i]]@longitude, lat = lista_stacji[[i]]@latitude,label=lista_stacji[[i]]@nazwaStacji ,
+      ssAwesome <- awesomeIcons(
+        icon = 'ios-close',
+        iconColor = 'white',
+        library = 'ion',
+        markerColor = kolor(lista_stacji[[i]]@pm10prep)
+      )
+      
+      print(lista_stacji[[i]]@pm10prep)
+      
+      
+      
+      map_leaflet <- addAwesomeMarkers(map_leaflet, lng=lista_stacji[[i]]@longitude, lat = lista_stacji[[i]]@latitude,label=lista_stacji[[i]]@nazwaStacji,
+                                       icon = ssAwesome,
                                        popup = paste( lista_stacji[[i]]@so2, lista_stacji[[i]]@no2, lista_stacji[[i]]@co, lista_stacji[[i]]@pm10, lista_stacji[[i]]@pm25, lista_stacji[[i]]@o3, lista_stacji[[i]]@c6h6))
       i = i+1
     }
@@ -212,7 +263,7 @@ server <- function(input, output) {
   # KLASA STACJI
   
   setClass("stacja", slots=list(nazwaStacji="character", idStacji="numeric", latitude="numeric", longitude="numeric",
-                                so2="character", no2="character", co="character", pm10="character", pm25="character", o3="character", c6h6="character"))
+                                so2="character", no2="character", co="character", pm10="character", pm25="character", o3="character", c6h6="character", pm10prep="character"))
   
   
   
