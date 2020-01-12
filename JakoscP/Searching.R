@@ -67,7 +67,7 @@ server <- function(input, output) {
     }
     if(inputStan == "Dobry"){
       returnString = "lightgreen"
-    }Gdynia
+    }
     if(inputStan == "Umiarkowany"){
       returnString = "beige"
     }
