@@ -251,11 +251,12 @@ server <- function(input, output) {
   #-------------------------------------------------------------------------------------------------
   #                     KONIEC FUNKCJI setTownMarkers
   #-------------------------------------------------------------------------------------------------
-  
+  if(file.exists("wynik.rds")){
   my_data <- readRDS("wynik.rds")
   print(my_data)
   
   setTownMarkers(my_data)
+  }
   
   # output$mymap <- mymap2
   
