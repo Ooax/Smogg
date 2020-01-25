@@ -219,7 +219,7 @@ server <- function(input, output) {
       
       
       map_leaflet <- addAwesomeMarkers(map_leaflet, lng=lista_stacji[[i]]@longitude, lat = lista_stacji[[i]]@latitude,label=lista_stacji[[i]]@nazwaStacji,
-                                       icon = ssAwesome,
+                                       icon = ssAwesome, layerId = lista_stacji[[i]]@idStacji,
                                        popup = paste( lista_stacji[[i]]@so2, lista_stacji[[i]]@no2, lista_stacji[[i]]@co, lista_stacji[[i]]@pm10, lista_stacji[[i]]@pm25, lista_stacji[[i]]@o3, lista_stacji[[i]]@c6h6))
       i = i+1
     }
@@ -247,6 +247,38 @@ server <- function(input, output) {
   #-------------------------------------------------------------------------------------------------
   #                     KONIEC FUNKCJI setTownMarkers
   #-------------------------------------------------------------------------------------------------
+  
+  #-------------------------------------------------------------------------------------------------
+  #                     FUNKCJA getStationHistory
+  #-------------------------------------------------------------------------------------------------
+  getStationHistory <- function(markerStatId) {
+    
+    url_stanowiska <- paste("http://api.gios.gov.pl/pjp-api/rest/station/sensors/",markerStatId , sep = "")
+    
+    dane_stanowisk <- GET(url = url_stanowiska)
+    dane_stanowisk <- content(dane_stanowisk, as = "text", encoding = "UTF-8")
+    dane_stanowisk_dane <- fromJSON(dane_stanowisk,flatten = TRUE)
+
+    dane_stanowisk_pm10 <- as_data_frame(dane_stanowisk_dane) %>%
+      select("id", "stationId", "param.paramCode")  %>%
+      filter(param.paramCode == "PM10")
+    
+    if(nrow(dane_stanowisk_pm10) == 1){
+    url_stanowiska_pm10 <- paste("http://api.gios.gov.pl/pjp-api/rest/data/getData/",dane_stanowisk_pm10$id , sep = "")
+    
+    dane_stanowiska_pm10 <- GET(url = url_stanowiska_pm10)
+    dane_stanowiska_pm10 <- content(dane_stanowiska_pm10, as = "text", encoding = "UTF-8")
+    dane_stanowiska_pm10_dane <- fromJSON(dane_stanowiska_pm10,flatten = TRUE)
+    print(dane_stanowiska_pm10_dane$values)
+    }
+    
+  }
+  
+  #-------------------------------------------------------------------------------------------------
+  #                     KONIEC FUNKCJI getStationHistory
+  #-------------------------------------------------------------------------------------------------
+  
+  
   setTownMarkers("")
   
   
@@ -284,6 +316,14 @@ server <- function(input, output) {
   
   # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEĹšCIE
   observeEvent(input$miastoButton, setTownMarkers(input$town))
+  
+  # WCISKANIE MARKERA ABY OTRZYMAc ID STACJI
+  observeEvent(
+    input$mymap_marker_click, {
+      markerStationId <- input$mymap_marker_click$id
+      getStationHistory(markerStationId)
+    }
+  )
   
 }
 
