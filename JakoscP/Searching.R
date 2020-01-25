@@ -20,18 +20,18 @@ ui <- fluidPage(
       tags$style(type="text/css", ".well { min-width: 255px; max-width:700px }")
     ),
       
-      textInput(inputId = "town", h3("Wpisz nazwę miejscowości:", style="color: green; font-size: 30px;"), 
+      textInput(inputId = "town", h3("Wpisz nazwÄ™ miejscowoĹ›ci:", style="color: green; font-size: 30px;"), 
                 value = "", width = "100%"),
       
       actionButton("miastoButton", "Wyszukaj", icon("search-location"), 
                    style="color: green; background-color: white; border-color: green; ", width="200px"),
 
-      actionButton("zapisButton", "Zapisz jako domyślne", icon("save"), 
+      actionButton("zapisButton", "Zapisz jako domyĹ›lne", icon("save"), 
              style="color: white; background-color: green; border-color: green; ", width="200px")
 
-      # textOutput(outputId = "stacjeMiejscowości"),
+      # textOutput(outputId = "stacjeMiejscowoĹ›ci"),
       # 
-      # textOutput(outputId = "stacjeMiejscowościOut")
+      # textOutput(outputId = "stacjeMiejscowoĹ›ciOut")
       
     ),
     
@@ -74,10 +74,10 @@ server <- function(input, output) {
     if(inputStan == "Dostateczny"){
       returnString = "orange"
     }
-    if(inputStan == "Zły"){
+    if(inputStan == "ZĹ‚y"){
       returnString = "red"
     }
-    if(inputStan == "Bardzo zły"){
+    if(inputStan == "Bardzo zĹ‚y"){
       returnString = "darkred"
     }
     
@@ -112,7 +112,7 @@ server <- function(input, output) {
     
     test_stacji <- as.list(stacja_miasto_tbl)
     
-    # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTÓW
+    # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTĂ“W
     
     lista_stacji <- list()
     
@@ -233,11 +233,11 @@ server <- function(input, output) {
     output$mymap <- mymap2
     
     
-    # output$stacjeMiejscowości <- renderText({
+    # output$stacjeMiejscowoĹ›ci <- renderText({
     #   paste("Stacje: ")
     # })
     # 
-    # output$stacjeMiejscowościOut <- renderText({
+    # output$stacjeMiejscowoĹ›ciOut <- renderText({
     #   paste(proponowane_stacje$stationName, "|")
     # })
     
@@ -251,6 +251,8 @@ server <- function(input, output) {
   #-------------------------------------------------------------------------------------------------
   #                     KONIEC FUNKCJI setTownMarkers
   #-------------------------------------------------------------------------------------------------
+  setTownMarkers("")
+  
   if(file.exists("wynik.rds")){
   my_data <- readRDS("wynik.rds")
   print(my_data)
@@ -283,7 +285,7 @@ server <- function(input, output) {
  
   #------------------------------------------------------------------------------------------------------
   
-  # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEŚCIE
+  # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEĹšCIE
   observeEvent(input$miastoButton, setTownMarkers(input$town))
   
 }
