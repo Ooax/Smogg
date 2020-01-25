@@ -20,19 +20,15 @@ ui <- fluidPage(
       tags$style(type="text/css", ".well { min-width: 255px; max-width:700px }")
     ),
       
-      textInput(inputId = "town", h3("Wpisz nazwÄ™ miejscowoĹ›ci:", style="color: green; font-size: 30px;"), 
+      textInput(inputId = "town", h3("Wpisz nazwę miejscowości:", style="color: green; font-size: 30px;"), 
                 value = "", width = "100%"),
       
       actionButton("miastoButton", "Wyszukaj", icon("search-location"), 
                    style="color: green; background-color: white; border-color: green; ", width="200px"),
 
-      actionButton("zapisButton", "Zapisz jako domyĹ›lne", icon("save"), 
+      actionButton("zapisButton", "Zapisz jako domyślne", icon("save"), 
              style="color: white; background-color: green; border-color: green; ", width="200px")
 
-      # textOutput(outputId = "stacjeMiejscowoĹ›ci"),
-      # 
-      # textOutput(outputId = "stacjeMiejscowoĹ›ciOut")
-      
     ),
     
     # Main panel for displaying outputs ----
@@ -74,10 +70,10 @@ server <- function(input, output) {
     if(inputStan == "Dostateczny"){
       returnString = "orange"
     }
-    if(inputStan == "ZĹ‚y"){
+    if(inputStan == "Zły"){
       returnString = "red"
     }
-    if(inputStan == "Bardzo zĹ‚y"){
+    if(inputStan == "Bardzo zły"){
       returnString = "darkred"
     }
     
@@ -112,7 +108,7 @@ server <- function(input, output) {
     
     test_stacji <- as.list(stacja_miasto_tbl)
     
-    # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTĂ“W
+    # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTÓW
     
     lista_stacji <- list()
     
