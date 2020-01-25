@@ -111,7 +111,7 @@ server <- function(input, output) {
     
     test_stacji <- as.list(stacja_miasto_tbl)
     
-    # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTÓW
+    # TUTAJ ROBIMY WSTAWIANIE WSZYSTKICH PUNKTĂ“W
     
     lista_stacji <- list()
     
@@ -232,11 +232,11 @@ server <- function(input, output) {
     output$mymap <- mymap2
     
     
-    # output$stacjeMiejscowoĹ›ci <- renderText({
+    # output$stacjeMiejscowoÄąâ€şci <- renderText({
     #   paste("Stacje: ")
     # })
     # 
-    # output$stacjeMiejscowoĹ›ciOut <- renderText({
+    # output$stacjeMiejscowoÄąâ€şciOut <- renderText({
     #   paste(proponowane_stacje$stationName, "|")
     # })
     
@@ -286,9 +286,9 @@ server <- function(input, output) {
       output$plotOutputUI <- renderPlot({
         ggplot(dffinal, aes(x=v3, y=v2)) +
           geom_line() +
-          ggtitle(label="Jakosc powietrza PM10 dla wybranej stacji", subtitle = "Zla jakosc >110") +
+          ggtitle(label="Jakość powietrza PM10 dla wybranej stacji", subtitle = "Zła jakosc >110") +
           xlab("Dane z ostatnich 3 dni") +
-          ylab("Wartosci") +
+          ylab("Wartości") +
           theme_light() +
           theme(axis.text.x=element_blank(),
                 axis.ticks.x=element_blank())
@@ -338,7 +338,7 @@ server <- function(input, output) {
   
   #------------------------------------------------------------------------------------------------------
   
-  # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEĹšCIE
+  # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEÄąĹˇCIE
   observeEvent(input$miastoButton, setTownMarkers(input$town))
   
   # WCISKANIE MARKERA ABY OTRZYMAc ID STACJI
