@@ -5,9 +5,10 @@ library(stringr)
 library(tibble)
 library(dplyr)
 require(leaflet)
+library(ggplot2)
 
 ui <- fluidPage(
-
+  
   h1(id="big-heading", "Stan powietrza", icon("leaf")),
   tags$style(HTML("#big-heading{color: darkgreen; font-size: 60px; font-style: oblique; font-family: Times, serif;}")),
   
@@ -19,27 +20,29 @@ ui <- fluidPage(
     sidebarPanel( tags$head(
       tags$style(type="text/css", ".well { min-width: 255px; max-width:700px }")
     ),
-      
-      textInput(inputId = "town", h3("Wpisz nazwę miejscowości:", style="color: green; font-size: 30px;"), 
-                value = "", width = "100%"),
-      
-      actionButton("miastoButton", "Wyszukaj", icon("search-location"), 
-                   style="color: green; background-color: white; border-color: green; ", width="200px"),
-
-      actionButton("zapisButton", "Zapisz jako domyślne", icon("save"), 
-             style="color: white; background-color: green; border-color: green; ", width="200px")
-
+    
+    textInput(inputId = "town", h3("Wpisz nazwę miejscowości:", style="color: green; font-size: 30px;"), 
+              value = "", width = "100%"),
+    
+    actionButton("miastoButton", "Wyszukaj", icon("search-location"), 
+                 style="color: green; background-color: white; border-color: green; ", width="200px"),
+    
+    actionButton("zapisButton", "Zapisz jako domyślne", icon("save"), 
+                 style="color: white; background-color: green; border-color: green; ", width="200px"),
+    
+    plotOutput("plotOutputUI", height="600")
+    
     ),
     
     # Main panel for displaying outputs ----
     mainPanel(width="8", style="border:groove 10px green; padding: 0",
-      
-      leafletOutput("mymap", height = "80vh"),
-  
+              
+              leafletOutput("mymap", height = "80vh"),
+              
     )
   )
 )
-  
+
 
 
 
@@ -258,18 +261,39 @@ server <- function(input, output) {
     dane_stanowisk <- GET(url = url_stanowiska)
     dane_stanowisk <- content(dane_stanowisk, as = "text", encoding = "UTF-8")
     dane_stanowisk_dane <- fromJSON(dane_stanowisk,flatten = TRUE)
-
+    
     dane_stanowisk_pm10 <- as_data_frame(dane_stanowisk_dane) %>%
       select("id", "stationId", "param.paramCode")  %>%
       filter(param.paramCode == "PM10")
     
     if(nrow(dane_stanowisk_pm10) == 1){
-    url_stanowiska_pm10 <- paste("http://api.gios.gov.pl/pjp-api/rest/data/getData/",dane_stanowisk_pm10$id , sep = "")
-    
-    dane_stanowiska_pm10 <- GET(url = url_stanowiska_pm10)
-    dane_stanowiska_pm10 <- content(dane_stanowiska_pm10, as = "text", encoding = "UTF-8")
-    dane_stanowiska_pm10_dane <- fromJSON(dane_stanowiska_pm10,flatten = TRUE)
-    print(dane_stanowiska_pm10_dane$values)
+      url_stanowiska_pm10 <- paste("http://api.gios.gov.pl/pjp-api/rest/data/getData/",dane_stanowisk_pm10$id , sep = "")
+      
+      dane_stanowiska_pm10 <- GET(url = url_stanowiska_pm10)
+      dane_stanowiska_pm10 <- content(dane_stanowiska_pm10, as = "text", encoding = "UTF-8")
+      dane_stanowiska_pm10_dane <- fromJSON(dane_stanowiska_pm10,flatten = TRUE)
+      df <- as.data.frame(dane_stanowiska_pm10_dane$values)
+      print(df$value)
+      
+      x <- c(1,2,3,4,5,6)
+      y<-c(234,123,435,467,345,1)
+      df2 = data.frame(v1=x, v2=y)
+      z = c(1:nrow(df))
+      
+      dffinal = data.frame(v1 = df$date, v2 = df$value, v3 = z)
+      
+      
+      output$plotOutputUI <- renderPlot({
+        ggplot(dffinal, aes(x=v3, y=v2)) +
+          geom_line() +
+          ggtitle(label="Jakosc powietrza PM10 dla wybranej stacji", subtitle = "Zla jakosc >110") +
+          xlab("Dane z ostatnich 3 dni") +
+          ylab("Wartosci") +
+          theme_light() +
+          theme(axis.text.x=element_blank(),
+                axis.ticks.x=element_blank())
+      })
+      
     }
     
   }
@@ -283,10 +307,10 @@ server <- function(input, output) {
   
   
   if(file.exists("wynik.rds")){
-  my_data <- readRDS("wynik.rds")
-  print(my_data)
-  
-  setTownMarkers(my_data)
+    my_data <- readRDS("wynik.rds")
+    print(my_data)
+    
+    setTownMarkers(my_data)
   }
   
   # output$mymap <- mymap2
@@ -307,11 +331,11 @@ server <- function(input, output) {
   # info_stacje <- content(info_stacje, as = "text", encoding = "UTF-8")
   # info_stacje_dane <- fromJSON(info_stacje,flatten = TRUE)
   # info_stacje_dane_filtered <- info_stacje_dane[c(1,6)]
-
+  
   observeEvent(input$zapisButton, saveToRDS())
   
   
- 
+  
   #------------------------------------------------------------------------------------------------------
   
   # PRZYCISK DO WYSZUKIWANIA STACJI W PODANYM MIEĹšCIE
