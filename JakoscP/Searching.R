@@ -160,7 +160,7 @@ server <- function(input, output) {
         pm10holder <- ""
       }
       if(length(dane_stacji_lista$pm25SourceDataDate) == 1){
-        pm25_pasted <- paste("PM25", "</br>", dane_stacji_lista$pm25SourceDataDate, ": ", dane_stacji_lista$pm25IndexLevel$indexLevelName, "</br>")
+        pm25_pasted <- paste("PM2.5", "</br>", dane_stacji_lista$pm25SourceDataDate, ": ", dane_stacji_lista$pm25IndexLevel$indexLevelName, "</br>")
       }
       else{
         pm25_pasted <- ""
@@ -217,7 +217,6 @@ server <- function(input, output) {
         markerColor = kolor(lista_stacji[[i]]@pm10prep)
       )
       
-      print(lista_stacji[[i]]@pm10prep)
       
       
       
@@ -273,7 +272,6 @@ server <- function(input, output) {
       dane_stanowiska_pm10 <- content(dane_stanowiska_pm10, as = "text", encoding = "UTF-8")
       dane_stanowiska_pm10_dane <- fromJSON(dane_stanowiska_pm10,flatten = TRUE)
       df <- as.data.frame(dane_stanowiska_pm10_dane$values)
-      print(df$value)
       
       x <- c(1,2,3,4,5,6)
       y<-c(234,123,435,467,345,1)
@@ -309,7 +307,6 @@ server <- function(input, output) {
   
   if(file.exists("wynik.rds")){
     my_data <- readRDS("wynik.rds")
-    print(my_data)
     
     setTownMarkers(my_data)
   }
