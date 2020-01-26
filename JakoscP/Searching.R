@@ -291,7 +291,8 @@ server <- function(input, output) {
           ylab("Wartości") +
           theme_light() +
           theme(axis.text.x=element_blank(),
-                axis.ticks.x=element_blank())
+                axis.ticks.x=element_blank()) +
+          scale_x_reverse()
       })
       
     }
